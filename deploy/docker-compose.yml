@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+      target: prod
+    image: iot_web:${IOT_WEB_VERSION:-latest}
+    restart: always
+    env_file:
+    - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      IOT_WEB_HOST: 0.0.0.0
+      IOT_WEB_DB_HOST: iot_web-db
+      IOT_WEB_DB_PORT: 5432
+      IOT_WEB_DB_USER: iot_web
+      IOT_WEB_DB_PASS: iot_web
+      IOT_WEB_DB_BASE: iot_web
+
+  db:
+    image: postgres:13.8-bullseye
+    hostname: iot_web-db
+    environment:
+      POSTGRES_PASSWORD: "iot_web"
+      POSTGRES_USER: "iot_web"
+      POSTGRES_DB: "iot_web"
+    volumes:
+    - iot_web-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U iot_web
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+
+
+volumes:
+  iot_web-db-data:
+    name: iot_web-db-data
