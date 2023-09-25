@@ -5,6 +5,8 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from iot_web.settings import settings
 
 
+
+
 async def create_database() -> None:
     """Create a database."""
     db_url = make_url(str(settings.db_url.with_path("/postgres")))
