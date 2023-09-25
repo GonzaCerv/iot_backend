@@ -1,7 +1,10 @@
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from starlette.requests import Request
+
+from .models.user import User
 
 
 async def get_db_session(request: Request) -> AsyncGenerator[AsyncSession, None]:
@@ -16,5 +19,8 @@ async def get_db_session(request: Request) -> AsyncGenerator[AsyncSession, None]
     try:  # noqa: WPS501
         yield session
     finally:
-        await session.commit()
         await session.close()
+
+
+async def get_user_by_email(database: Session, email: str):
+    return database.query(User).filter(User.email == email).first()

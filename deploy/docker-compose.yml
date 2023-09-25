@@ -28,6 +28,8 @@ services:
       POSTGRES_PASSWORD: "iot_web"
       POSTGRES_USER: "iot_web"
       POSTGRES_DB: "iot_web"
+    ports:
+    - "5432:5432"
     volumes:
     - iot_web-db-data:/var/lib/postgresql/data
     restart: always
